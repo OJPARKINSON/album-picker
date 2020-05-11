@@ -1,6 +1,6 @@
 const axios = require('axios');
 const mongoose = require('mongoose');
-const { UsersSchema } = require('../models/models')
+const { UsersSchema } = require('../models/mongoSchema')
 const User = mongoose.model('users', UsersSchema);
 
 const index = async (req, res) => {

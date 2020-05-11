@@ -2,15 +2,14 @@ const express = require('express');
 const session = require('express-session');
 const dotenv = require('dotenv');
 const mongoose = require('mongoose');
+var bodyParser = require('body-parser')
 const MongoStore = require('connect-mongo')(session);
-const routes = require('./routes/routes');
 const cors = require('cors')
-const { UsersSchema } = require('./models/models')
+const { ApolloServer, gql } = require('apollo-server-express');
 
-const PORT = process.env.PORT || 5000;
 const app = express();
-const User = mongoose.model('users', UsersSchema);
-
+const port = 4000
+dotenv.config();
 mongoose.Promise = global.Promise;
 
 mongoose.connect('mongodb://localhost:27017/AlbumPicker', {
@@ -20,12 +19,48 @@ mongoose.connect('mongodb://localhost:27017/AlbumPicker', {
   useUnifiedTopology: true,
 });
 
-dotenv.config();
-
-app.use(express.static('public'))
-    .use(session({ secure: true, secret: 'keyboard cat', saveUninitialized: false, resave: false, store: new MongoStore({ mongooseConnection: mongoose.connection }) }))
+app.use(bodyParser.urlencoded({ extended: false }))
+    .use(bodyParser.json())
+    .use(session({
+        secret: 'keyboard cat',
+        resave: false,
+        saveUninitialized: true,
+        cookie: { secure: true }
+      }))
     .use(cors())
-    
-routes(app);
 
-app.listen(PORT, () => console.log(`Listening on port ${PORT}`));
+const typeDefs = gql`
+    type User {
+        id: ID
+        accessToken: String,
+        refreshToken: String,
+        username: String,
+      }
+    
+      type Query {
+        currentUser: User
+        Link: String
+      }
+  `;
+  
+const resolvers = {
+    Query: {
+        Link: () => `https://accounts.spotify.com/authorize?show_dialog=true&response_type=code&redirect_uri=http://localhost:3000/callback&client_id=${process.env.client_id}`,
+        currentUser: (parent, args, context) => context.getUser(),
+    }
+};
+    
+const server = new ApolloServer({ 
+    typeDefs, 
+    resolvers,
+    context: ({ req }) => {
+    console.log(req.session)
+    return ({
+      getUser: () => req.session.id,
+      logout: () => req.logout(),
+    })}
+});
+
+server.applyMiddleware({ app });
+
+app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`))
