@@ -1,32 +1,29 @@
-import React, { useEffect, useState} from 'react'
-import axios from 'axios'
-// import {
-//     // BrowserRouter as Router,
-//     // Switch,
-//     // Route,
-//     Link
-//   } from "react-router-dom";
+import React from 'react'
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { gql } from 'apollo-boost';
+
+const LINK = gql`
+{
+    getLink
+    getUser {
+        id
+    }
+  }
+`;
+
+export const LOGOUT_MUTATION = gql`
+  mutation Logout {
+    logout
+  }
+`;
 
 const Login = () => {
-    const [link, setLink] = useState("");
-    useEffect(() => {
-        axios({
-            method: 'GET',
-            url: '/auth/spotify',
-        })
-        .then(reslink => setLink(reslink.data))
-        .catch((err) => console.log(err));
-    })
-    return (
-        <>
-            <h1>Welcome to Album Picker</h1>
-            <ul>
-                <li>
-                    <a href={link}>Login</a>
-                </li>
-            </ul>
-        </>
-    )
+    const { loading, error, data } = useQuery(LINK);
+    const [Logout] = useMutation(LOGOUT_MUTATION);
+    console.log({ loading, error, data })
+    if (loading) return <div>Loading</div>;
+    return data?.getUser.id === null ? 
+        <a href={data?.getLink}>Login</a> : <button onClick={() => Logout()}>Logout</button>
 }
 
 export default Login

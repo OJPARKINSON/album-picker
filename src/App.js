@@ -6,22 +6,28 @@ import {
   Link
 } from "react-router-dom";
 import Home from './components/Home'
-import Callback from './components/Callback'
 import AlbumPicker from './components/AlbumPicker'
 import Login from './components/Login'
 import './App.css';
+import ApolloClient from 'apollo-boost';
+import { ApolloProvider } from '@apollo/react-hooks';
+
+const client = new ApolloClient({
+  uri: 'http://localhost:5000/graphql',
+  credentials: 'include'
+});
 
 function App() {
   return (
     <Router>
-      <div>
+      <ApolloProvider client={client}>
         <nav>
           <ul>
             <li>
               <Link to="/">Home</Link>
             </li>
             <li>
-              <Link to="/login">login</Link>
+              <Login />
             </li>
             <li>
               <Link to="/AlbumPicker">Album Picker</Link>
@@ -29,21 +35,15 @@ function App() {
           </ul>
         </nav>
 
-        {/* A <Switch> looks through its children <Route>s and
-            renders the first one that matches the current URL. */}
         <Switch>
-          <Route path="/login">
-            <Login />
-          </Route>
           <Route path="/AlbumPicker">
             <AlbumPicker />
           </Route>
-          <Route path="/callback" component={Callback} />
           <Route path="/">
             <Home />
           </Route>
         </Switch>
-      </div>
+      </ApolloProvider>
     </Router>
   );
 }
