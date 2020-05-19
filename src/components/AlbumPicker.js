@@ -9,12 +9,12 @@ const CURRENTUSER = gql`
       username
     }
     getSpotifyAlbums {
-      id
+      _id
       name
       artwork {
         url
       }
-      artist {
+      artists {
         id
         name
         url
@@ -23,14 +23,28 @@ const CURRENTUSER = gql`
   }
 `;
 
-const Login = () => {
+const AlbumPicker = () => {
     const { loading, error, data } = useQuery(CURRENTUSER);
     console.log({loading, error, data})
     return (
         <>
             <h1>Welcome user {data?.username}</h1>
+            <div className="albumContainer">
+                {data?.getSpotifyAlbums?.map(album => {
+                    return <Album album={album} />
+                })}
+            </div>
         </>
     )
 }
 
-export default Login
+const Album = ({ album }) => {
+    return (
+        <div className="album">
+            <img src={album?.artwork?.url} alt={album?.artists[0].name}  />
+            <p>{album?.artists[0].name} - {album.name}</p>
+        </div>
+    )
+} 
+
+export default AlbumPicker

@@ -5,18 +5,10 @@ const { v4: uuidv4 } = require('uuid');
 const dotenv = require('dotenv');
 dotenv.config();
 
-passport.serializeUser(function(user, done) {
-    done(null, user._id);
-  });
-    
+passport.serializeUser((user, done) => done(null, user._id));
+
 passport.deserializeUser(function(obj, done) {
-    User.findById(obj, async (err, docs) => {
-        if (err) {
-        return done(err)
-        } else {
-        return done(null, docs);
-        }
-    });
+    User.findById(obj, async (err, docs) => err ? done(err): done(null, docs));
 });
 
 passport.use(
@@ -32,10 +24,7 @@ passport.use(
             if (docs) {done(null, docs); return;}
 
             var newUser = new User({_id: uuidv4(), accessToken, refreshToken, spotifyid: profile.id, username: profile.username});
-            newUser.save(function (err, user) {
-            if (err) return console.error(err);
-            return user
-            });
+            newUser.save((err, user) => err ? console.error(err) : user);
             return done(null, newUser)
         });
         }

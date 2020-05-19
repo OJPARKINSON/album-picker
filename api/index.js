@@ -1,8 +1,6 @@
 const session = require('express-session');
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser')
-const cookieParser = require('cookie-parser');
 const { ApolloServer } = require('apollo-server-express');
 
 const routes = require('./routes/routes')
@@ -21,7 +19,6 @@ app
   .use(session({...sessionOptions, store}))
   .use(passport.initialize())
   .use(passport.session())
-  .use(bodyParser())
   .use(cors({...corsOptions}))
   .disable("x-powered-by");
 
@@ -35,4 +32,4 @@ const server = new ApolloServer({
 
 server.applyMiddleware({ app, cors: false });
 
-app.listen(port, () => console.log(`Example app listening at http://localhost:${port}${server.graphqlPath}`))
+app.listen(port, () => console.log(`Example app listening at http://localhost:${port}${server.graphqlPath}`));

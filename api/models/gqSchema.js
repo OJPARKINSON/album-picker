@@ -8,15 +8,15 @@ const typeDefs = gql`
   }
   
   type Album {
-    id: ID
+    _id: ID
     name: String
     tracks: [Track]
-    artist: Artist
+    artists: [Artists]
     artwork: Artwork
     total_tracks: Int
   }
 
-  type Artist {
+  type Artists {
     id: ID
     name: String
     url: String

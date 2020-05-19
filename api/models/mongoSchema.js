@@ -6,25 +6,29 @@ const UsersSchema = new mongoose.Schema({
     refreshToken: String,
     spotifyid: String,
     username: String,
-    albums: [{_id: String}]
+    albums: [{
+      _id: String,
+    }]
 
   });
   
-const MusicSchema = new mongoose.Schema({
+  const MusicSchema = new mongoose.Schema({
     _id: String,
     name: String,
-    release_date: Date,
     total_tracks: Number,
     tracks: [{
         id: String,
         name: String,
         popularity: Number,
     }],
-    Artist: {
+    artists: [{
         id: String,
         name: String,
         url: String
-    }
+    }],
+    artwork: [{
+      url: String
+    }]
   });
   
 

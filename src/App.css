@@ -28,6 +28,32 @@
   color: #61dafb;
 }
 
+.albumContainer {
+  display: flex;
+  /* grid-template-columns: repeat(7, 1fr); */
+  justify-content: center;
+  background-color: rgb(66, 66, 66);
+
+}
+
+.album {
+  margin: 1vw;
+
+}
+
+.album img {
+  width: 75%;
+  display: block;
+  margin: .5vw 0;
+  margin: 0 auto;
+}
+
+.album p {
+  width: 100%;
+  color: white;
+  text-align: center;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

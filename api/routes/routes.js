@@ -10,7 +10,6 @@ const routes = (app, passport) => {
   app.get('/callback',
     passport.authenticate('spotify', { failureRedirect: 'http://localhost:3000/#error' }),
     function(req, res) {
-        console.log(req.session)
         res.redirect('http://localhost:3000/AlbumPicker');
     }
   )
