@@ -38,7 +38,7 @@
 
 .album {
   margin: 1vw;
-
+  list-style: none;
 }
 
 .album img {

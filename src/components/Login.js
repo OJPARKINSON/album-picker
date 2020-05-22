@@ -5,9 +5,6 @@ import { gql } from 'apollo-boost';
 const LINK = gql`
 {
     getLink
-    getUser {
-        id
-    }
   }
 `;
 
@@ -20,10 +17,14 @@ export const LOGOUT_MUTATION = gql`
 const Login = () => {
     const { loading, error, data } = useQuery(LINK);
     const [Logout] = useMutation(LOGOUT_MUTATION);
-    console.log({ loading, error, data })
+
     if (loading) return <div>Loading</div>;
-    return data?.getUser.id === null ? 
-        <a href={data?.getLink}>Login</a> : <button onClick={() => Logout()}>Logout</button>
+
+    return data?.getLink ? 
+        <a href={data?.getLink}>Login</a> 
+            : 
+        <button onClick={() => Logout()}>Logout</button>
+    
 }
 
 export default Login

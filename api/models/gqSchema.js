@@ -2,7 +2,7 @@ const { gql } = require('apollo-server-express');
 
 const typeDefs = gql`
   type user {
-    id: ID
+    _id: ID
     username: String
     albums: [Album]
   }
@@ -12,7 +12,7 @@ const typeDefs = gql`
     name: String
     tracks: [Track]
     artists: [Artists]
-    artwork: Artwork
+    artworkUrl: String
     total_tracks: Int
   }
 
@@ -27,7 +27,13 @@ const typeDefs = gql`
     name: String,
     popularity: Int
   }
-  type Artwork {
+
+  input AlbumInput {
+    _id: ID
+    name: String
+    artwork: ArtworkInput
+  }
+  input ArtworkInput {
     url: String
   }
 
@@ -35,10 +41,10 @@ const typeDefs = gql`
     getUser: user
     getLink: String
     getSpotifyAlbums: [Album]
-    getUserAlbums: [Album]
   }
   type Mutation {
     logout: Boolean
+    addUserAlbum(_id: ID!, name: String!, artworkUrl: String!): Album
   }
 `;
 

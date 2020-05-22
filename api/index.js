@@ -1,16 +1,16 @@
-const session = require('express-session');
-const express = require('express');
-const cors = require('cors');
-const { ApolloServer } = require('apollo-server-express');
+import session from 'express-session';
+import express from 'express';
+import cors from 'cors';
+import { ApolloServer } from 'apollo-server-express';
 
-const routes = require('./routes/routes')
-const { typeDefs } = require('./models/gqSchema');
-const { resolvers } = require('./models/resolvers');
-const { store } = require('./utils/mongoose');
-const { passport } = require('./utils/passport');
-const { corsOptions } = require('./utils/cors')
-const { sessionOptions } = require('./utils/session')
-
+import routes from'./routes/routes';
+import { typeDefs } from'./models/gqSchema';
+import { resolvers } from'./models/resolvers';
+import { store } from'./utils/mongoose';
+import { passport } from'./utils/passport';
+import { corsOptions } from'./utils/cors';
+import { sessionOptions } from'./utils/session';
+import { User } from'./utils/mongoose';
 
 const port = 5000
 const app = express();
@@ -27,7 +27,10 @@ routes(app, passport);
 const server = new ApolloServer({ 
     typeDefs, 
     resolvers,
-    context: ({ req }) => ({ req })
+    context: async ({ req }) =>  ({
+        user: await User.findOne({_id: req.session?.passport?.user || ""}).lean(), 
+        logout: () => req.logout()
+      })
 });
 
 server.applyMiddleware({ app, cors: false });

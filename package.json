@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@apollo/react-hooks": "^3.1.5",
+    "@babel/core": "^7.9.6",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
@@ -35,7 +36,7 @@
   "scripts": {
     "start": "npm run start:app && npm run start:api",
     "start:app": "react-scripts start",
-    "start:api": "nodemon --watch ./api \"./api/index.js\"",
+    "start:api": "nodemon --exec babel-node ./api/index.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
