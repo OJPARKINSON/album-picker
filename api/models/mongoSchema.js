@@ -11,6 +11,9 @@ export const UsersSchema = new mongoose.Schema({
     name: String,
     artwork: {
       url: String
+    },
+    artist: {
+      name: String
     }
   }]
 });

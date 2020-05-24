@@ -39,6 +39,7 @@
 .album {
   margin: 1vw;
   list-style: none;
+  max-width: 12vw;
 }
 
 .album img {
@@ -52,6 +53,11 @@
   width: 100%;
   color: white;
   text-align: center;
+}
+
+.album button {
+  display: block;
+  margin: 0 auto;
 }
 
 @keyframes App-logo-spin {

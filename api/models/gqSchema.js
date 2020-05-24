@@ -11,12 +11,12 @@ const typeDefs = gql`
     _id: ID
     name: String
     tracks: [Track]
-    artists: [Artists]
+    artist: Artist
     artworkUrl: String
     total_tracks: Int
   }
 
-  type Artists {
+  type Artist {
     id: ID
     name: String
     url: String
@@ -36,6 +36,9 @@ const typeDefs = gql`
   input ArtworkInput {
     url: String
   }
+  input ArtistInput {
+    name: String
+  }
 
   type Query {
     getUser: user
@@ -44,7 +47,8 @@ const typeDefs = gql`
   }
   type Mutation {
     logout: Boolean
-    addUserAlbum(_id: ID!, name: String!, artworkUrl: String!): Album
+    addUserAlbum(_id: ID!, name: String!, artworkUrl: String!, artist: String!): [Album]
+    removeUserAlbum(_id: ID!, name: String!, artworkUrl: String!, artist: String!): [Album]
   }
 `;
 

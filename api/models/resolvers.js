@@ -1,4 +1,4 @@
-import { getLink, getUser, getSpotifyAlbums, addUserAlbum} from '../controllers/controller';
+import { getLink, getUser, getSpotifyAlbums, addUserAlbum, removeUserAlbum} from '../controllers/controller';
 
 const resolvers = {
     Query: {
@@ -8,6 +8,7 @@ const resolvers = {
     },
     Mutation: {
         addUserAlbum,
+        removeUserAlbum,
         logout: (_,__,context) => context.logout(),
     },
 };

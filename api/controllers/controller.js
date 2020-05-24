@@ -14,7 +14,9 @@ export const getLink = async (parent, args, context) => {
 export const getUser = async (parent, args, context) => {
     if (!context?.user?._id) throw new AuthenticationError('you must be logged in to query this schema'); 
     const { _id, username, albums} = await User.findOne({ _id: context?.user?._id}).lean();
-    return { _id, username, albums }
+    const newAlbums = albums.map(album => ({_id: album._id, name: album.name, artworkUrl: album.artwork.url }));
+
+    return { _id, username, albums: newAlbums }
 }
 
 export const getSpotifyAlbums = async (parent, args, context) => {
@@ -44,7 +46,7 @@ export const getSpotifyAlbums = async (parent, args, context) => {
                     return acc
                 }, [])
 
-                return { _id: id, name, tracks: tracks.items, artists, artwork: images[0], total_tracks}
+                return { _id: id, name, tracks: tracks.items, artist: artists[0], artworkUrl: images[0].url, total_tracks}
             })
         })
         .catch(err => console.error(err));
@@ -53,5 +55,18 @@ export const getSpotifyAlbums = async (parent, args, context) => {
 export const addUserAlbum = async (parent, args, context) => {
     if (!context?.user?._id) throw new AuthenticationError('you must be logged in to query this schema'); 
     var { albums } = await User.findOne({ _id: context?.user?._id}).lean();
-    console.log({albums, parent, args, context})
+    await User.where({ _id: context?.user?._id}).update({ albums: [{_id: args._id, name: args.name, artwork: {url: args.artworkUrl }, artist: { name: args.artist}}, ...albums] });
+
+    var newAlbums = albums.map(album => ({_id: album._id, name: album.name, artworkUrl: album.artwork.url, artist: { name: album.artist.name} }));
+
+    return [{_id: args._id, name: args.name, artworkUrl: args.artworkUrl, artist: {name: args.artist}}, ...newAlbums]
+}
+
+export const removeUserAlbum = async (parent, args, context) => {
+    console.log({parent, args, context});
+    if (!context?.user?._id) throw new AuthenticationError('you must be logged in to query this schema'); 
+    var { albums } = await User.findOne({ _id: context?.user?._id}).lean();
+    albums = albums.reduce((acc, current) => { if (current._id !== args._id) {acc.push(current)} return acc}, [])
+    await User.where({ _id: context?.user?._id}).update({ albums });
+    return albums
 }
