@@ -1,0 +1,70 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+.albumContainer {
+  display: flex;
+  /* grid-template-columns: repeat(7, 1fr); */
+  justify-content: center;
+  background-color: rgb(66, 66, 66);
+
+}
+
+.album {
+  margin: 1vw;
+  list-style: none;
+  max-width: 12vw;
+}
+
+.album img {
+  width: 75%;
+  display: block;
+  margin: .5vw 0;
+  margin: 0 auto;
+}
+
+.album p {
+  width: 100%;
+  color: white;
+  text-align: center;
+}
+
+.album button {
+  display: block;
+  margin: 0 auto;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

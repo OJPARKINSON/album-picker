@@ -1,0 +1,61 @@
+{
+  "name": "client",
+  "version": "0.1.0",
+  "private": true,
+  "devDependencies": {
+    "@babel/node": "^7.8.7",
+    "nodemon": "^2.0.3"
+  },
+  "dependencies": {
+    "@apollo/react-hooks": "^3.1.5",
+    "@babel/core": "^7.9.6",
+    "@testing-library/jest-dom": "^4.2.4",
+    "@testing-library/react": "^9.3.2",
+    "@testing-library/user-event": "^7.1.2",
+    "apollo-boost": "^0.4.8",
+    "apollo-cache-inmemory": "^1.6.6",
+    "apollo-server-express": "^2.13.0",
+    "axios": "^0.19.2",
+    "connect-mongo": "^3.2.0",
+    "connect-mongodb-session": "^2.3.1",
+    "cookie-parser": "^1.4.5",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "graphql": "^15.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.9.11",
+    "node-fetch": "^2.6.0",
+    "passport": "^0.4.1",
+    "passport-spotify": "^1.1.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "react-router-dom": "^5.1.2",
+    "react-scripts": "3.4.1"
+  },
+  "scripts": {
+    "start": "npm run start:app && npm run start:api",
+    "start:app": "react-scripts start",
+    "start:api": "nodemon --exec babel-node ./api/index.js",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "proxy": "http://localhost:5000/"
+}
