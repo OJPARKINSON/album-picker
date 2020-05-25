@@ -8,10 +8,10 @@ const AlbumPicker = () => {
         onCompleted: (data) => updateData(data.getUser.albums)
     });
     const [addUserAlbum] = useMutation(Add_User_Album, {
-        onCompleted: (data) => updateData(data.addUserAlbum)
+        onCompleted: (data) =>  updateData(data.addUserAlbum)
     });
     const [removeUserAlbum] = useMutation(RemoveUserAlbum, {
-        onCompleted: (data) => updateData(data.removeUserAlbum)
+        onCompleted: (data) => { console.log({data}); return updateData(data.removeUserAlbum)}
     });
     
       
@@ -47,34 +47,30 @@ const AlbumPickerBody = ({data, collectionData, addUserAlbum, removeUserAlbum}) 
             )}
         </ul> 
     </>
-)
-const Album = ({ album, addUserAlbum, collectionData }) => {
-    const { _id, name, artworkUrl, artist} = album;
-    return (
-        <li className="album" >
-            <img src={album.artworkUrl} alt={album?.artist?.name}  />
-            <p>{album?.artist?.name} - {album?.name}</p>
-            <button 
-                onClick={() => addUserAlbum({ variables: {_id, name, artworkUrl, artist: artist.name}})}
-                disabled={collectionData.map(({_id}) => _id).includes(album._id)}
-            >
-                +
-            </button>
-        </li>
-    )
-} 
+);
 
-const Collection = ({ album, removeUserAlbum }) => {
-    const { _id, name, artworkUrl, artist} = album;
-    return (
-        <li className="album" >
-            <img src={album.artworkUrl} alt={album?.artist?.name}  />
-            <p>{album?.artist?.name} - {album.name}</p>
-            <button onClick={() => removeUserAlbum({ variables: {_id, name, artworkUrl, artist: artist.name}})}>
-                X
-            </button>
-        </li>
-    )
-} 
+const Album = ({ album, addUserAlbum, collectionData }) => (
+    <li className="album" >
+        <img src={album.artworkUrl} alt={album?.artist?.name}  />
+        <p>{album?.artist?.name} - {album?.name}</p>
+        <button 
+            onClick={() => addUserAlbum({ variables: {_id: album._id}})}
+            disabled={collectionData.map(({_id}) => _id).includes(album._id)}
+        >
+            +
+        </button>
+    </li>
+);
+
+
+const Collection = ({ album, removeUserAlbum }) => (
+    <li className="album" >
+        <img src={album.artworkUrl} alt={album?.artist?.name}  />
+        <p>{album?.artist?.name} - {album.name}</p>
+        <button onClick={() => removeUserAlbum({ variables: {_id: album._id}})}>
+            X
+        </button>
+    </li>
+);
 
 export default AlbumPicker

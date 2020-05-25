@@ -1,16 +1,12 @@
-const mongoose = require('mongoose');
-const session = require('express-session');
+import mongoose from 'mongoose';
+import session from 'express-session';
+import { UsersSchema, AlbumSchema, TrackSchema, ArtistSchema } from '../models/mongoSchema';
 const MongoDBStore = require("connect-mongodb-session")(session);
-const { UsersSchema, MusicSchema } = require('../models/mongoSchema')
 
-var store = new MongoDBStore({
-    uri: 'mongodb://localhost:27017/AlbumPicker',
-    collection: "sessions"
-});
-
-store.on("error", function(error) {
-    console.log(error);
-});
+export var store = new MongoDBStore({
+        uri: 'mongodb://localhost:27017/AlbumPicker',
+        collection: "sessions"
+    }).on("error", (error) => console.log(error));
 
 mongoose.Promise = global.Promise;
 mongoose.connect('mongodb://localhost:27017/AlbumPicker', {
@@ -20,12 +16,6 @@ mongoose.connect('mongodb://localhost:27017/AlbumPicker', {
     useUnifiedTopology: true,
 });
 
-const User = mongoose.model('User', UsersSchema);
-const Music = mongoose.model('Music', MusicSchema);
-
-module.exports = {
-    store,
-    mongoose,
-    User,
-    Music
-}
+export const User = mongoose.model('User', UsersSchema);
+export const Album = mongoose.model('Album', AlbumSchema);
+export const Artist = mongoose.model('Artist', ArtistSchema);

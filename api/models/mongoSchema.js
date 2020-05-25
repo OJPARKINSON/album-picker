@@ -8,32 +8,31 @@ export const UsersSchema = new mongoose.Schema({
   username: String,
   albums: [{
     _id: String,
-    name: String,
-    artwork: {
-      url: String
-    },
-    artist: {
-      name: String
-    }
+    // tracks: [Number],
+    // total_tracks: Number
+  }],
+  tracks: [{
+    _id: [String],
+  }],
+  artists: [{
+    _id: [String],
   }]
 });
   
-export const MusicSchema = new mongoose.Schema({
+export const AlbumSchema = new mongoose.Schema({
   _id: String,
   name: String,
   total_tracks: Number,
-  tracks: [{
-      id: String,
-      name: String,
-      popularity: Number,
-  }],
-  artists: [{
-      id: String,
-      name: String,
-      url: String
-  }],
+  artist: {
+    name: String
+  },
   artwork: [{
     url: String
   }]
 });
-  
+
+export const ArtistSchema = new mongoose.Schema({
+  _id: String,
+  name: String,
+  url: String
+});

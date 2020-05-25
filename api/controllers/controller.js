@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { User } from '../utils/mongoose';
+import { User, Album } from '../utils/mongoose';
 import { AuthenticationError } from "apollo-server-core";
 
 export const getLink = async (parent, args, context) => {
@@ -14,7 +14,16 @@ export const getLink = async (parent, args, context) => {
 export const getUser = async (parent, args, context) => {
     if (!context?.user?._id) throw new AuthenticationError('you must be logged in to query this schema'); 
     const { _id, username, albums} = await User.findOne({ _id: context?.user?._id}).lean();
-    const newAlbums = albums.map(album => ({_id: album._id, name: album.name, artworkUrl: album.artwork.url }));
+    
+    const newAlbums = albums.map(async album => {
+        const { _id, artist, artwork, total_tracks } = await Album.findOne({ _id: album._id}).lean();
+        return { 
+            _id, 
+            artist, 
+            artworkUrl: artwork[0].url,
+            total_tracks
+        }
+    });
 
     return { _id, username, albums: newAlbums }
 }
@@ -46,6 +55,7 @@ export const getSpotifyAlbums = async (parent, args, context) => {
                     return acc
                 }, [])
 
+                new Album({ _id: id, name, tracks: tracks.items, artist: artists[0], artwork: { url: images[0].url}, total_tracks}).save()
                 return { _id: id, name, tracks: tracks.items, artist: artists[0], artworkUrl: images[0].url, total_tracks}
             })
         })
@@ -55,17 +65,44 @@ export const getSpotifyAlbums = async (parent, args, context) => {
 export const addUserAlbum = async (parent, args, context) => {
     if (!context?.user?._id) throw new AuthenticationError('you must be logged in to query this schema'); 
     var { albums } = await User.findOne({ _id: context?.user?._id}).lean();
-    await User.where({ _id: context?.user?._id}).update({ albums: [{_id: args._id, name: args.name, artwork: {url: args.artworkUrl }, artist: { name: args.artist}}, ...albums] });
+    albums = [...albums, {_id: args._id}]
 
-    var newAlbums = albums.map(album => ({_id: album._id, name: album.name, artworkUrl: album.artwork.url, artist: { name: album.artist.name} }));
-
-    return [{_id: args._id, name: args.name, artworkUrl: args.artworkUrl, artist: {name: args.artist}}, ...newAlbums]
+    await User.where({ _id: context?.user?._id}).update({ albums });
+    return albums.map(async (album) =>  {       
+        const { _id, name, artist, artwork, total_tracks } = await Album.findOne({ _id: album._id}).lean();
+        return { 
+            _id, 
+            name,
+            artist, 
+            artworkUrl: artwork[0].url,
+            total_tracks
+        }
+    });
 }
 
 export const removeUserAlbum = async (parent, args, context) => {
     if (!context?.user?._id) throw new AuthenticationError('you must be logged in to query this schema'); 
     var { albums } = await User.findOne({ _id: context?.user?._id}).lean();
-    albums = await albums.reduce((acc, current) => { if (current._id !== args._id) {acc.push(current)} return acc}, [])
+    albums = albums.reduce((acc, current) => { 
+        if (current._id !== args._id) {
+            acc.push(current)
+        } 
+        return acc
+    }, []);
     await User.where({ _id: context?.user?._id}).update({ albums });
-    return albums.map(({_id, name, artwork, artist}) => ({_id, name, artworkUrl: artwork.url, artist}))
+
+    return mapAlbums(albums);
+}
+
+const mapAlbums = (albums) => {
+    return albums.map(async (album) =>  {       
+        const { _id, name, artist, artwork, total_tracks } = await Album.findOne({_id: album._id}).lean();
+        return { 
+            _id, 
+            name,
+            artist, 
+            artworkUrl: artwork[0].url,
+            total_tracks
+        }
+    });
 }

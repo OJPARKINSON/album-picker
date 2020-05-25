@@ -1,4 +1,9 @@
-import { getLink, getUser, getSpotifyAlbums, addUserAlbum, removeUserAlbum} from '../controllers/controller';
+import { 
+    getLink,
+    getUser, 
+    getSpotifyAlbums, 
+    addUserAlbum, 
+    removeUserAlbum }  from '../controllers/controller';
 
 const resolvers = {
     Query: {
