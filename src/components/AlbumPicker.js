@@ -3,7 +3,8 @@ import { useQuery, useMutation } from '@apollo/react-hooks';
 import { CURRENTUSER, Add_User_Album, RemoveUserAlbum } from '../schema'
 
 const AlbumPicker = () => {
-    const [collectionData, updateData] = useState([])
+    const [collectionData, updateData] = useState([]);
+
     const { loading, error, data } = useQuery(CURRENTUSER, {
         onCompleted: (data) => updateData(data.getUser.albums)
     });
@@ -11,10 +12,9 @@ const AlbumPicker = () => {
         onCompleted: (data) =>  updateData(data.addUserAlbum)
     });
     const [removeUserAlbum] = useMutation(RemoveUserAlbum, {
-        onCompleted: (data) => { console.log({data}); return updateData(data.removeUserAlbum)}
+        onCompleted: (data) => updateData(data.removeUserAlbum)
     });
     
-      
     return (
         <>
             {error && (<h1>{error?.message}</h1>)}
@@ -49,25 +49,27 @@ const AlbumPickerBody = ({data, collectionData, addUserAlbum, removeUserAlbum}) 
     </>
 );
 
-const Album = ({ album, addUserAlbum, collectionData }) => (
+const Album = ({ album, addUserAlbum, collectionData }) => {
+    console.log({album})
+    return (
     <li className="album" >
         <img src={album.artworkUrl} alt={album?.artist?.name}  />
         <p>{album?.artist?.name} - {album?.name}</p>
         <button 
-            onClick={() => addUserAlbum({ variables: {_id: album._id}})}
+            onClick={() => addUserAlbum({ variables: {_id: album._id, artist_id: album.artist._id}})}
             disabled={collectionData.map(({_id}) => _id).includes(album._id)}
         >
             +
         </button>
     </li>
-);
+)};
 
 
 const Collection = ({ album, removeUserAlbum }) => (
     <li className="album" >
         <img src={album.artworkUrl} alt={album?.artist?.name}  />
         <p>{album?.artist?.name} - {album.name}</p>
-        <button onClick={() => removeUserAlbum({ variables: {_id: album._id}})}>
+        <button onClick={() => removeUserAlbum({ variables: {_id: album._id, artist_id: album.artist._id}})}>
             X
         </button>
     </li>

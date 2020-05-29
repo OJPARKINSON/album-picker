@@ -8,14 +8,13 @@ export const UsersSchema = new mongoose.Schema({
   username: String,
   albums: [{
     _id: String,
-    // tracks: [Number],
-    // total_tracks: Number
   }],
   tracks: [{
     _id: [String],
   }],
   artists: [{
-    _id: [String],
+    _id: String,
+    url: String
   }]
 });
   
@@ -24,15 +23,20 @@ export const AlbumSchema = new mongoose.Schema({
   name: String,
   total_tracks: Number,
   artist: {
-    name: String
-  },
-  artwork: [{
+    _id: String,
+    name: String,
     url: String
-  }]
+  },
+  artwork: {
+    url: String
+  }
 });
 
 export const ArtistSchema = new mongoose.Schema({
   _id: String,
   name: String,
-  url: String
+  url: String,
+  image: {
+    url: String
+  }
 });

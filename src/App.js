@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import Home from './components/Home'
 import AlbumPicker from './components/AlbumPicker'
+import ArtistPicker from './components/ArtistPicker'
 import Login from './components/Login'
 import './App.css';
 import ApolloClient from 'apollo-boost';
@@ -35,12 +36,18 @@ function App() {
             <li>
               <Link to="/AlbumPicker">Album Picker</Link>
             </li>
+            <li>
+              <Link to="/ArtistPicker">Artist Picker</Link>
+            </li>
           </ul>
         </nav>
 
         <Switch>
           <Route path="/AlbumPicker">
             <AlbumPicker />
+          </Route>
+          <Route path="/ArtistPicker">
+            <ArtistPicker />
           </Route>
           <Route path="/">
             <Home />
