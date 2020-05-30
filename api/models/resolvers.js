@@ -3,13 +3,15 @@ import {
     getUser, 
     getSpotifyAlbums, 
     addUserAlbum, 
-    removeUserAlbum }  from '../controllers/controller';
+    removeUserAlbum, 
+    getUserArtists }  from '../controllers/controller';
 
 const resolvers = {
     Query: {
         getLink,
         getUser,
         getSpotifyAlbums,
+        getUserArtists,
     },
     Mutation: {
         addUserAlbum,

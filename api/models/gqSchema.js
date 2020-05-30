@@ -20,6 +20,7 @@ const typeDefs = gql`
     _id: ID
     name: String
     url: String
+    artistUrl: String
   }
 
 
@@ -29,10 +30,11 @@ const typeDefs = gql`
     getUserArtists: [Artist]
     getSpotifyAlbums: [Album]
   }
+  
   type Mutation {
     logout: Boolean
-    addUserAlbum(_id: ID!): [Album]
-    removeUserAlbum(_id: ID!): [Album]
+    addUserAlbum(_id: ID!, artist_id: String!): [Album]
+    removeUserAlbum(_id: ID!, artist_id: String!): [Album]
   }
 `;
 
