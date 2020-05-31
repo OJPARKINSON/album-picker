@@ -2,7 +2,7 @@ const SpotifyStrategy = require('passport-spotify').Strategy;
 const passport = require('passport');
 const { User } = require('./mongoose')
 const { v4: uuidv4 } = require('uuid');
-const { saveAlbums, saveArtists } = require('../controllers/controller')
+const { saveAlbums, saveArtists } = require('../controllers/atoms')
 const dotenv = require('dotenv');
 dotenv.config();
 

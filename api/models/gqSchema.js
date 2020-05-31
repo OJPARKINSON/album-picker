@@ -39,6 +39,8 @@ const typeDefs = gql`
     logout: Boolean
     addUserAlbum(_id: ID!, artist_id: String!): [Album]
     removeUserAlbum(_id: ID!, artist_id: String!): [Album]
+    addUserArtist(_id: ID!): [Artist]
+    removeUserArtist(_id: ID!): [Artist]
   }
 `;
 

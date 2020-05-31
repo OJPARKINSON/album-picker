@@ -1,48 +1,75 @@
-import React from 'react'
-import { useQuery } from '@apollo/react-hooks';
-import { USERSARTISTS } from '../schema'
+import React, {useState} from 'react'
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { USERSARTISTS, Add_User_Artist, RemoveUserArtist } from '../schema'
 
 const ArtistPicker = () => {
-    const { loading, error, data } = useQuery(USERSARTISTS);
-    console.log({ loading, error, data })
+    const [collectionData, updateData] = useState([]);
+
+    const { loading, error, data } = useQuery(USERSARTISTS, {
+        onCompleted: (data) => {console.log({data}); return updateData(data.getUser.artists)}
+    });
+    console.log({collectionData})
+    const [addUserArtist] = useMutation(Add_User_Artist, {
+        onCompleted: (data) =>  updateData(data.addUserArtist)
+    });
+    const [removeUserArtist] = useMutation(RemoveUserArtist, {
+        onCompleted: (data) => updateData(data.removeUserArtist)
+    });
+
     return (
         <>
             {error && <h1>{error?.message}</h1>}
             {loading && <h1>Loading</h1>}
-            {data && <ArtistPickerBody data={data.getSpotifyData.artists} />}
+            {data && (
+                <ArtistPickerBody 
+                    data={data} 
+                    addUserArtist={addUserArtist} 
+                    removeUserArtist={removeUserArtist} 
+                    collectionData={collectionData} 
+                />
+            )}
         </>
     )
 };
 
-const ArtistPickerBody = ({ data }) => (
+const ArtistPickerBody = ({ data, collectionData, addUserArtist, removeUserArtist }) => (
     <>
         <h1>Welcome user {data?.username}</h1>
         <h2>Artist you might like:</h2>
-            {data?.map(artist => 
-                    <Artist artist={artist} key={artist?._id} />
-            )}
-        <h2>Artist's in your collection:</h2>
         <ul className="artistContainer">
-            {/* <ul className="albumContainer">
-                {collectionData?.map(album => 
-                    <ArtistCollection album={album} removeUserAlbum={removeUserAlbum} key={album?._id} />
-                )}
-            </ul> */}
+            {data?.getSpotifyData?.artists?.map(artist => 
+                <Artist artist={artist} key={artist?._id} addUserArtist={addUserArtist} collectionData={collectionData}/>
+            )}
         </ul>
+        <h2>Artist's in your collection:</h2>
+            <ul className="albumContainer">
+                {collectionData?.map((artist) => artist).map(artist => 
+                    <Collection artist={artist} key={artist?._id} removeUserArtist={removeUserArtist} />
+                )}
+            </ul>
     </>
 );
 
-const Artist = ({ artist }) => (
+const Artist = ({ artist, addUserArtist, collectionData }) => (
     <li className="artist" >
         {/* <img src={artist.artistUrl} alt={artist.name}  /> */}
         <p>{artist.name}</p>
-        {/* <button 
-            onClick={() => addUserAlbum({ variables: {_id: album._id, artist_id: album.artist._id}})}
-            disabled={collectionData.map(({_id}) => _id).includes(album._id)}
+        <button 
+            onClick={() => addUserArtist({ variables: {_id: artist._id}})}
+            disabled={collectionData?.map(({_id}) => _id).includes(artist._id)}
         >
             +
-        </button> */}
+        </button>
     </li>
 )
+
+const Collection = ({ artist, removeUserArtist }) => (
+    <li className="artist" >
+        <p>{artist?.name}</p>
+        <button onClick={() => removeUserArtist({ variables: {_id: artist._id}})}>
+            X
+        </button>
+    </li>
+);
 
 export default ArtistPicker;

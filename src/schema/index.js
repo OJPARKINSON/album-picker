@@ -15,6 +15,11 @@ export const CURRENTUSER = gql`
                 artworkUrl
                 total_tracks
             }
+            artists {
+                _id
+                name
+                url
+            }
         }
         getSpotifyData {    
             albums {
@@ -44,6 +49,12 @@ export const USERSARTISTS = gql`
                 }
                 artworkUrl
                 total_tracks
+            }
+            artists {
+                _id
+                name
+                url
+                artistUrl
             }
         }
         getSpotifyData {
@@ -78,6 +89,27 @@ export const RemoveUserAlbum = gql`
         _id
         name
       }
+    }
+  }
+`;
+
+export const Add_User_Artist = gql`
+  mutation addUserArtist($_id: ID!) {
+    addUserArtist(_id: $_id) {
+        _id
+        name
+        url
+        artistUrl
+    }
+  }
+`;
+export const RemoveUserArtist = gql`
+  mutation removeUserArtist($_id: ID!) {
+    removeUserArtist(_id: $_id) {
+        _id
+        name
+        url
+        artistUrl
     }
   }
 `;
