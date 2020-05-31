@@ -14,7 +14,7 @@ const AlbumPicker = () => {
     const [removeUserAlbum] = useMutation(RemoveUserAlbum, {
         onCompleted: (data) => updateData(data.removeUserAlbum)
     });
-    console.log({ loading, error, data })
+
     return (
         <>
             {error && (<h1>{error?.message}</h1>)}
@@ -56,7 +56,7 @@ const Album = ({ album, addUserAlbum, collectionData }) => {
         <p>{album?.artist?.name} - {album?.name}</p>
         <button 
             onClick={() => addUserAlbum({ variables: {_id: album._id, artist_id: album.artist._id}})}
-            disabled={collectionData.map(({_id}) => _id).includes(album._id)}
+            disabled={collectionData?.map(({_id}) => _id).includes(album._id)}
         >
             +
         </button>

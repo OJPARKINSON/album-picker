@@ -2,8 +2,8 @@ import axios from 'axios';
 import { Album, Artist } from '../utils/mongoose';
 
 export const mapAlbums = (albums) => {
-    return albums.map(async (album) =>  {       
-        const { _id, name, artist, artwork, total_tracks } = await Album.findOne({_id: album._id}).lean();
+    return albums?.map(async (album) =>  {
+        const { _id, name, artist, artwork, total_tracks } = await Album.findOne({_id: album?._id}).lean();
         return { 
             _id, 
             name,
@@ -15,8 +15,9 @@ export const mapAlbums = (albums) => {
 }
 
 export const mapArtists = (artists) => {
-    return artists.map(async (artists) =>  {       
-        const {_id, name, url} = await Artist.findOne({_id: artists._id}).lean();
+    return artists.map(async (artists) =>  {
+        if (!artists?._id) artists = artists._id = 1;  
+        const {_id, name, url} = await Artist.findOne({_id: artists?._id}).lean();
         return {_id, name, url}
     });
 }
@@ -62,12 +63,12 @@ export const saveArtists = async (accessToken) => {
         }
     })
     .then(res => {
-        res.data.items.map(({track}) => {
+        const tracks = res.data.items.map(({track}) => {
             const { id, name, external_urls } = track?.album?.artists[0]
             new Artist({_id: id, name, url: external_urls.spotify}).save()
             return { _id: id, name, url: external_urls.spotify }
         })
-        return res.data.artists.map(({id, name, external_urls, images}) => ({_id: id, name, url: external_urls.spotify, image: { url: images[0].url}}))
+        return tracks
     })
     .catch(err => console.error(err));
 };

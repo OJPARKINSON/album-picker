@@ -1,4 +1,4 @@
-import { User} from '../utils/mongoose';
+import { User, Album} from '../utils/mongoose';
 import { AuthenticationError } from "apollo-server-core";
 import { mapAlbums, mapArtists } from './atoms'
 
@@ -35,12 +35,22 @@ export const addUserArtist = async (parent, args, context) => {
 
 export const removeUserArtist = async (parent, args, context) => {
     if (!context?.user?._id) throw new AuthenticationError('you must be logged in to query this schema'); 
-    var { artists } = await User.findOne({ _id: context?.user?._id}).lean();
+    var { artists, albums } = await User.findOne({ _id: context?.user?._id}).lean();
+
     artists = artists.reduce((acc, current) => { 
         current._id !== args._id && acc.push(current)
         return acc
     }, []);
-    await User.where({ _id: context?.user?._id}).update({ artists });
 
+    albums = albums.reduce(async (acc, current) => { 
+        var album = await Album.findOne({ _id: current._id}).lean();
+        if (args._id !== await album.artist._id) {
+            acc = [...await acc, current];
+        }
+        return acc
+    }, []);
+    
+    await User.where({ _id: context?.user?._id}).updateOne({ artists: await artists, albums: await albums});
+    
     return mapArtists(artists)
 }

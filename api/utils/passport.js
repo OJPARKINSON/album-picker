@@ -1,7 +1,6 @@
 const SpotifyStrategy = require('passport-spotify').Strategy;
 const passport = require('passport');
 const { User } = require('./mongoose')
-const { v4: uuidv4 } = require('uuid');
 const { saveAlbums, saveArtists } = require('../controllers/atoms')
 const dotenv = require('dotenv');
 dotenv.config();
@@ -20,15 +19,20 @@ passport.use(
             callbackURL: 'http://localhost:5000/callback'
         },
         function(accessToken, refreshToken, expires_in, profile, done) {
-        User.findById(profile.id, (err, docs) => {
+        User.findById(profile.id, async (err, docs) => {
             if (err) {done(err); return;}
-            if (docs) {done(null, docs); return;}
-
-            var newUser = new User({_id: uuidv4(), accessToken, refreshToken, spotifyid: profile.id, username: profile.username});
-            saveAlbums(accessToken);
-            saveArtists(accessToken);
-            newUser.save((err, user) => err ? console.error(err) : user);
-            return done(null, newUser)
+            else if (docs) {
+                await User.where({ _id: docs?._id}).updateOne({ accessToken, refreshToken, spotifyid: docs.id, username: docs.username});
+                saveAlbums(accessToken);
+                saveArtists(accessToken);
+                return done(null, {_id: docs.id, accessToken, refreshToken, spotifyid: docs.id, username: docs.username})
+            } else {                
+                var newUser = new User({_id: profile.id, accessToken, refreshToken, spotifyid: profile.id, username: profile.username});
+                saveAlbums(accessToken);
+                saveArtists(accessToken);
+                newUser.save((err, user) => err ? console.error(err) : user);
+                return done(null, newUser)
+            }
         });
         }
     )

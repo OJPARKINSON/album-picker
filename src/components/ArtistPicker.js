@@ -6,9 +6,8 @@ const ArtistPicker = () => {
     const [collectionData, updateData] = useState([]);
 
     const { loading, error, data } = useQuery(USERSARTISTS, {
-        onCompleted: (data) => {console.log({data}); return updateData(data.getUser.artists)}
+        onCompleted: (data) =>  updateData(data.getUser.artists)
     });
-    console.log({collectionData})
     const [addUserArtist] = useMutation(Add_User_Artist, {
         onCompleted: (data) =>  updateData(data.addUserArtist)
     });
@@ -20,7 +19,7 @@ const ArtistPicker = () => {
         <>
             {error && <h1>{error?.message}</h1>}
             {loading && <h1>Loading</h1>}
-            {data && (
+            {data && collectionData && (
                 <ArtistPickerBody 
                     data={data} 
                     addUserArtist={addUserArtist} 
@@ -42,7 +41,7 @@ const ArtistPickerBody = ({ data, collectionData, addUserArtist, removeUserArtis
             )}
         </ul>
         <h2>Artist's in your collection:</h2>
-            <ul className="albumContainer">
+            <ul className="artistContainer">
                 {collectionData?.map((artist) => artist).map(artist => 
                     <Collection artist={artist} key={artist?._id} removeUserArtist={removeUserArtist} />
                 )}
