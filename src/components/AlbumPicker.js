@@ -14,7 +14,7 @@ const AlbumPicker = () => {
     const [removeUserAlbum] = useMutation(RemoveUserAlbum, {
         onCompleted: (data) => updateData(data.removeUserAlbum)
     });
-    
+    console.log({ loading, error, data })
     return (
         <>
             {error && (<h1>{error?.message}</h1>)}
@@ -36,7 +36,7 @@ const AlbumPickerBody = ({data, collectionData, addUserAlbum, removeUserAlbum}) 
         <h1>Welcome user {data?.username}</h1>
         <h2>Albums you might like:</h2>
         <ul className="albumContainer">
-            {data?.getSpotifyAlbums?.map(album => 
+            {data?.getSpotifyData?.albums?.map(album => 
                 <Album album={album} collectionData={collectionData} addUserAlbum={addUserAlbum} key={album?._id} />
             )}
         </ul>
@@ -50,7 +50,6 @@ const AlbumPickerBody = ({data, collectionData, addUserAlbum, removeUserAlbum}) 
 );
 
 const Album = ({ album, addUserAlbum, collectionData }) => {
-    console.log({album})
     return (
     <li className="album" >
         <img src={album.artworkUrl} alt={album?.artist?.name}  />

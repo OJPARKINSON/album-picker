@@ -16,14 +16,16 @@ export const CURRENTUSER = gql`
                 total_tracks
             }
         }
-        getSpotifyAlbums {
-            _id
-            name
-            artworkUrl
-            total_tracks
-            artist {
+        getSpotifyData {    
+            albums {
                 _id
                 name
+                artworkUrl
+                total_tracks
+                artist {
+                    _id
+                    name
+                }
             }
         }
     }
@@ -44,11 +46,12 @@ export const USERSARTISTS = gql`
                 total_tracks
             }
         }
-        getUserArtists {
-            _id
-            name
-            url
-            artistUrl
+        getSpotifyData {
+            artists {
+                _id
+                name
+                url
+            }
         }
     }
 `;

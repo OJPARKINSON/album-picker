@@ -20,21 +20,18 @@ export const getUser = async (parent, args, context) => {
     return { _id, username, albums: newAlbums }
 }
 
-export const getSpotifyAlbums = async (parent, args, context) => {
-    if (!context?.user?._id) throw new AuthenticationError('you must be logged in to query this schema'); 
-    var user = await User.findOne({ _id: context?.user?._id}).lean();
-    return axios({
-            url: "https://api.spotify.com/v1/me/albums",
-            method: "get",
-            headers: {
-                'Authorization': 'Bearer ' + user.accessToken,
-                Accept: "application/json"
-            }
-        })
-        .then(res => saveAlbums(res.data.items))
-        .then(data => saveArtists(data, user.accessToken))
-        .catch(err => console.error(err));
-}
+export const getSpotifyData = async (parent, args, context) => {
+    let albums = await Album.find().lean();
+    const artists = await Artist.find().lean();
+    albums = albums.map(({ _id, name, artist, artwork, total_tracks }) =>  ({ 
+        _id, 
+        name,
+        artist, 
+        artworkUrl: artwork.url,
+        total_tracks
+    }));
+    return { albums, artists }
+};
 
 export const addUserAlbum = async (parent, args, context) => {
     if (!context?.user?._id) throw new AuthenticationError('you must be logged in to query this schema'); 
@@ -58,16 +55,6 @@ export const removeUserAlbum = async (parent, args, context) => {
     return mapAlbums(albums);
 }
 
-export const getUserArtists = async (parent, args, context) => {
-    if (!context?.user?._id) throw new AuthenticationError('you must be logged in to query this schema');
-    var { artists } = await User.findOne({ _id: context?.user?._id}).lean();
-    return artists.map(async artist => {
-        var { _id, name, url, image } = await Artist.findOne({ _id: artist._id}).lean();
-
-        return { _id, name, url, artistUrl: image.url }
-    });
-}
-
 const mapAlbums = (albums) => {
     return albums.map(async (album) =>  {       
         const { _id, name, artist, artwork, total_tracks } = await Album.findOne({_id: album._id}).lean();
@@ -81,8 +68,17 @@ const mapAlbums = (albums) => {
     });
 }
 
-const saveAlbums = (albums) => {
-    return albums.map(({ album }) => {
+export const saveAlbums = (accessToken) => {
+    axios({
+        url: "https://api.spotify.com/v1/me/albums",
+        method: "get",
+        headers: {
+            'Authorization': 'Bearer ' + accessToken,
+            Accept: "application/json"
+        }
+    })
+    .then(res => {
+        res.data.items.map(({ album }) => {
         let { id, name, tracks, artists, images, total_tracks } = album;
         artists = artists.reduce((acc, {id, name, href} ) => {
             (id && name && href) && acc.push({_id: id, name, url: href})
@@ -96,12 +92,13 @@ const saveAlbums = (albums) => {
         
         new Album({ _id: id, name, tracks: tracks.items, artist: artists[0], artwork: { url: images[0].url}, total_tracks}).save()
         return { _id: id, name, tracks: tracks.items, artist: artists[0], artworkUrl: images[0].url, total_tracks}
-    });
+        })  
+    })
 };
 
-const saveArtists = async (albums, accessToken) => {
+export const saveArtists = async (accessToken) => {
     axios({
-        url: `https://api.spotify.com/v1/artists?ids=${albums.map(({ artist }) => artist._id).join(',')}`,
+        url: `https://api.spotify.com/v1/me/tracks`,
         method: "get",
         headers: {
             'Authorization': 'Bearer ' + accessToken,
@@ -109,12 +106,12 @@ const saveArtists = async (albums, accessToken) => {
         }
     })
     .then(res => {
-        res.data.artists.map(({id, name, external_urls, images}) => {
-            new Artist({_id: id, name, url: external_urls.spotify, image: { url: images[0].url }}).save()
-            return {_id: id, name, url: external_urls.spotify, image: { url: images[0].url }}
+        res.data.items.map(({track}) => {
+            const { id, name, external_urls } = track?.album?.artists[0]
+            new Artist({_id: id, name, url: external_urls.spotify}).save()
+            return { _id: id, name, url: external_urls.spotify }
         })
         return res.data.artists.map(({id, name, external_urls, images}) => ({_id: id, name, url: external_urls.spotify, image: { url: images[0].url}}))
     })
     .catch(err => console.error(err));
-    return albums
 };

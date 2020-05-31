@@ -2,6 +2,7 @@ const SpotifyStrategy = require('passport-spotify').Strategy;
 const passport = require('passport');
 const { User } = require('./mongoose')
 const { v4: uuidv4 } = require('uuid');
+const { saveAlbums, saveArtists } = require('../controllers/controller')
 const dotenv = require('dotenv');
 dotenv.config();
 
@@ -24,6 +25,8 @@ passport.use(
             if (docs) {done(null, docs); return;}
 
             var newUser = new User({_id: uuidv4(), accessToken, refreshToken, spotifyid: profile.id, username: profile.username});
+            saveAlbums(accessToken);
+            saveArtists(accessToken);
             newUser.save((err, user) => err ? console.error(err) : user);
             return done(null, newUser)
         });

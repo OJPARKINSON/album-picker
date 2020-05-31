@@ -23,14 +23,18 @@ const typeDefs = gql`
     artistUrl: String
   }
 
+  type spotifyData {
+    artists: [Artist]
+    albums: [Album]
+  }
+
 
   type Query {
     getLink: String
     getUser: user
-    getUserArtists: [Artist]
-    getSpotifyAlbums: [Album]
+    getSpotifyData: spotifyData
   }
-  
+
   type Mutation {
     logout: Boolean
     addUserAlbum(_id: ID!, artist_id: String!): [Album]
