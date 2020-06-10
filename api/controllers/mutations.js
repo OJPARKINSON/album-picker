@@ -14,12 +14,18 @@ export const addUserAlbum = async (parent, args, context) => {
 
 export const removeUserAlbum = async (parent, args, context) => {
     if (!context?.user?._id) throw new AuthenticationError('you must be logged in to query this schema'); 
-    var { albums } = await User.findOne({ _id: context?.user?._id}).lean();
+    var { albums, artists } = await User.findOne({ _id: context?.user?._id}).lean();
     albums = albums.reduce((acc, current) => { 
         current._id !== args._id && acc.push(current)
         return acc
     }, []);
-    await User.where({ _id: context?.user?._id}).update({ albums });
+
+    artists = artists.reduce((acc, current) => { 
+        current._id !== args.artist_id && acc.push(current)
+        return acc
+    }, []);
+
+    await User.where({ _id: context?.user?._id}).update({ albums, artists });
 
     return mapAlbums(albums);
 }

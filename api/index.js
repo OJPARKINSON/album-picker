@@ -28,7 +28,7 @@ const server = new ApolloServer({
     typeDefs, 
     resolvers,
     context: async ({ req }) =>  ({
-        user: await User.findOne({_id: req.session?.passport?.user || ""}).lean(), 
+        user: await User.findOne({_id: req?.session?.passport?.user || ""}).lean(), 
         logout: () => req.logout()
       })
 });
