@@ -15,7 +15,7 @@
     "apollo-boost": "^0.4.8",
     "apollo-cache-inmemory": "^1.6.6",
     "apollo-server-express": "^2.13.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "connect-mongo": "^3.2.0",
     "connect-mongodb-session": "^2.3.1",
     "cookie-parser": "^1.4.5",
